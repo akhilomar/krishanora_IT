@@ -172,9 +172,15 @@ export default function ScrollVideo() {
       const wrapper = wrapperRef.current
       if (!wrapper) return
 
-      const rect       = wrapper.getBoundingClientRect()
-      const scrollable = wrapper.offsetHeight - window.innerHeight
-      const p = Math.min(1, Math.max(0, -rect.top / scrollable))
+      const rect    = wrapper.getBoundingClientRect()
+      const viewH   = window.innerHeight
+      const wrapH   = wrapper.offsetHeight
+
+      // Spread animation over the full visible window — not just the sticky
+      // period. Animation starts the moment the section enters the viewport
+      // (rect.top = viewH) and ends when sticky releases (rect.top = -(wrapH-viewH)).
+      // Total range = wrapH, so there is zero dead scroll.
+      const p = Math.min(1, Math.max(0, (viewH - rect.top) / wrapH))
 
       // Progress bar — direct DOM, no React re-render
       if (progressRef.current) progressRef.current.style.width = `${p * 100}%`
@@ -210,7 +216,7 @@ export default function ScrollVideo() {
   }, [mode])
 
   return (
-    <div ref={wrapperRef} style={{ height: '300vh' }}>
+    <div ref={wrapperRef} style={{ height: '230vh' }}>
       <div className="sticky top-0 h-[100dvh] overflow-hidden">
 
         {/* Extraction video — hidden, used only for frame seeking */}

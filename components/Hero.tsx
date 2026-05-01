@@ -21,15 +21,29 @@ export default function Hero() {
   return (
     <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
 
-      {/* ── Video background ── */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover z-0"
-        src="/IT_service.mp4"
-      />
+      {/* ── Video background ──
+           Wrapper with overflow:hidden + centred transform covers all browsers.
+           Avoids object-fit on <video> which breaks on older iOS Safari.
+      */}
+      <div className="absolute inset-0 overflow-hidden z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            minWidth: '100%',
+            minHeight: '100%',
+            width: 'auto',
+            height: 'auto',
+          }}
+          src="/IT_service.mp4"
+        />
+      </div>
 
       {/* ── Inward masking gradient ──
            Four layers stacked:
