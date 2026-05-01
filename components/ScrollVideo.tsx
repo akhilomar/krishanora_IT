@@ -20,7 +20,10 @@ const SECTIONS = [
   },
 ]
 
-// Cover-fit an ImageBitmap onto the canvas
+// Extraction config — fewer frames + lower res = much faster startup
+const FRAME_COUNT = 50
+const EXTRACT_WIDTH = 640        // extract at half-HD; CSS scales it up
+
 function drawBitmapCover(
   ctx: CanvasRenderingContext2D,
   bmp: ImageBitmap,
@@ -28,12 +31,11 @@ function drawBitmapCover(
   ch: number,
 ) {
   const scale = Math.max(cw / bmp.width, ch / bmp.height)
-  const dx = (cw - bmp.width * scale) / 2
+  const dx = (cw - bmp.width  * scale) / 2
   const dy = (ch - bmp.height * scale) / 2
   ctx.drawImage(bmp, dx, dy, bmp.width * scale, bmp.height * scale)
 }
 
-// Cover-fit HTMLVideoElement (used for the first-frame seed before extraction)
 function drawVideoCover(
   ctx: CanvasRenderingContext2D,
   video: HTMLVideoElement,
@@ -47,174 +49,171 @@ function drawVideoCover(
   ctx.drawImage(video, (cw - vw * scale) / 2, (ch - vh * scale) / 2, vw * scale, vh * scale)
 }
 
-// Extract `count` evenly-spaced frames from the video into ImageBitmap[]
-async function extractFrames(video: HTMLVideoElement, count: number): Promise<ImageBitmap[]> {
-  const duration = video.duration
-  // Extract at half the native resolution to keep memory reasonable
-  const capW = Math.min(video.videoWidth,  1280)
-  const capH = Math.round(capW * video.videoHeight / video.videoWidth)
-
-  // Use OffscreenCanvas when available (avoids main-thread layout)
-  const useOffscreen = typeof OffscreenCanvas !== 'undefined'
-  const buffer = useOffscreen
-    ? new OffscreenCanvas(capW, capH)
-    : Object.assign(document.createElement('canvas'), { width: capW, height: capH })
-  const bCtx = buffer.getContext('2d') as CanvasRenderingContext2D
-
-  const frames: ImageBitmap[] = []
-
-  for (let i = 0; i < count; i++) {
-    const t = duration * (i / Math.max(count - 1, 1))
-    await new Promise<void>((resolve) => {
-      const onSeeked = async () => {
-        bCtx.drawImage(video, 0, 0, capW, capH)
-        frames.push(await createImageBitmap(buffer as OffscreenCanvas))
-        resolve()
-      }
-      video.addEventListener('seeked', onSeeked, { once: true })
-      video.currentTime = t
-    })
-  }
-
-  return frames
-}
-
 export default function ScrollVideo() {
   const wrapperRef   = useRef<HTMLDivElement>(null)
   const canvasRef    = useRef<HTMLCanvasElement>(null)
-  const videoRef     = useRef<HTMLVideoElement>(null)
+  const videoRef     = useRef<HTMLVideoElement>(null)   // extraction source
+  const liveRef      = useRef<HTMLVideoElement>(null)   // live preview while extracting
   const progressRef  = useRef<HTMLDivElement>(null)
   const ctxRef       = useRef<CanvasRenderingContext2D | null>(null)
   const framesRef    = useRef<ImageBitmap[]>([])
   const activeIdxRef = useRef(0)
+  const rafRef       = useRef(0)                        // live preview rAF id
 
+  // 'live'    → video plays visibly, extraction running in background
+  // 'ready'   → all frames loaded, canvas scrubbing active
+  const [mode, setMode]         = useState<'live' | 'ready'>('live')
   const [activeIdx, setActiveIdx] = useState(0)
-  const [loadPct, setLoadPct]     = useState(0)   // 0–100 extraction progress
-  const [ready, setReady]         = useState(false)
 
-  // ── Canvas context ────────────────────────────────────────────────────────
+  // ── Canvas context ───────────────────────────────────────────────────────
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     ctxRef.current = canvas.getContext('2d')
   }, [])
 
-  // ── Canvas size sync ──────────────────────────────────────────────────────
+  // ── Canvas size sync ─────────────────────────────────────────────────────
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const sync = () => {
       canvas.width  = canvas.offsetWidth
       canvas.height = canvas.offsetHeight
-      // Redraw current frame at new size
       const frames = framesRef.current
       const ctx    = ctxRef.current
-      if (ctx && frames.length > 0) {
-        drawBitmapCover(ctx, frames[0], canvas.width, canvas.height)
-      }
+      if (ctx && frames.length > 0) drawBitmapCover(ctx, frames[0], canvas.width, canvas.height)
     }
     sync()
     window.addEventListener('resize', sync)
     return () => window.removeEventListener('resize', sync)
   }, [])
 
-  // ── Frame extraction ──────────────────────────────────────────────────────
-  // Pre-decodes every frame into GPU-ready ImageBitmaps. After this, scrolling
-  // is a plain array lookup — zero async work, zero jank.
+  // ── Live preview loop ────────────────────────────────────────────────────
+  // Mirrors the live video onto the canvas every frame while extraction runs.
+  // This gives immediate visual — the user sees animation the instant the
+  // section is in view, with zero wait.
+  useEffect(() => {
+    const live   = liveRef.current
+    const canvas = canvasRef.current
+    const ctx    = ctxRef.current
+    if (!live || !canvas || !ctx) return
+
+    const tick = () => {
+      if (mode === 'live') {
+        drawVideoCover(ctx, live, canvas.width, canvas.height)
+        rafRef.current = requestAnimationFrame(tick)
+      }
+    }
+
+    if (mode === 'live') {
+      live.play().catch(() => {})
+      rafRef.current = requestAnimationFrame(tick)
+    }
+
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      live.pause()
+    }
+  }, [mode])
+
+  // ── Background frame extraction ──────────────────────────────────────────
+  // Runs silently while the live video plays. Uses a separate hidden <video>
+  // element so seeking doesn't interrupt the visible preview.
+  // Reduced to 50 frames at 640px → typically completes in 5–10 seconds.
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
     const run = async () => {
-      // Wait for metadata (duration + dimensions)
       if (video.readyState < 1) {
         await new Promise<void>((res) =>
           video.addEventListener('loadedmetadata', () => res(), { once: true }),
         )
       }
 
-      const TARGET_FRAMES = Math.min(90, Math.ceil(video.duration * 24))
+      const capW = Math.min(video.videoWidth, EXTRACT_WIDTH)
+      const capH = Math.round(capW * video.videoHeight / video.videoWidth)
+      const useOffscreen = typeof OffscreenCanvas !== 'undefined'
+      const buf = useOffscreen
+        ? new OffscreenCanvas(capW, capH)
+        : Object.assign(document.createElement('canvas'), { width: capW, height: capH })
+      const bCtx = buf.getContext('2d') as CanvasRenderingContext2D
+
       const frames: ImageBitmap[] = []
 
-      for (let i = 0; i < TARGET_FRAMES; i++) {
-        const t = video.duration * (i / Math.max(TARGET_FRAMES - 1, 1))
+      for (let i = 0; i < FRAME_COUNT; i++) {
+        const t = video.duration * (i / Math.max(FRAME_COUNT - 1, 1))
         await new Promise<void>((resolve) => {
-          const onSeeked = async () => {
-            const capW = Math.min(video.videoWidth,  1280)
-            const capH = Math.round(capW * video.videoHeight / video.videoWidth)
-            const useOffscreen = typeof OffscreenCanvas !== 'undefined'
-            const buf = useOffscreen
-              ? new OffscreenCanvas(capW, capH)
-              : Object.assign(document.createElement('canvas'), { width: capW, height: capH })
-            const bCtx = buf.getContext('2d') as CanvasRenderingContext2D
+          video.addEventListener('seeked', async () => {
             bCtx.drawImage(video, 0, 0, capW, capH)
             frames.push(await createImageBitmap(buf as OffscreenCanvas))
             resolve()
-          }
-          video.addEventListener('seeked', onSeeked, { once: true })
+          }, { once: true })
           video.currentTime = t
         })
-
-        // Update loading progress bar
-        setLoadPct(Math.round(((i + 1) / TARGET_FRAMES) * 100))
       }
 
       framesRef.current = frames
 
-      // Draw first frame before revealing
-      const canvas = canvasRef.current
-      const ctx    = ctxRef.current
-      if (canvas && ctx && frames[0]) {
-        drawBitmapCover(ctx, frames[0], canvas.width, canvas.height)
-      }
-
-      setReady(true)
+      // Stop live loop, switch canvas to scrubbing mode
+      cancelAnimationFrame(rafRef.current)
+      const live = liveRef.current
+      if (live) live.pause()
+      setMode('ready')
     }
 
     run()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // ── Scroll handler ─────────────────────────────────────────────────────────
-  // Pure array lookup — no video seeking at all during scroll.
+  // ── Scroll handler ───────────────────────────────────────────────────────
   useEffect(() => {
     const onScroll = () => {
       const wrapper = wrapperRef.current
       if (!wrapper) return
 
-      const rect      = wrapper.getBoundingClientRect()
+      const rect       = wrapper.getBoundingClientRect()
       const scrollable = wrapper.offsetHeight - window.innerHeight
       const p = Math.min(1, Math.max(0, -rect.top / scrollable))
 
-      // Progress bar: direct DOM — zero React overhead
+      // Progress bar — direct DOM, no React re-render
       if (progressRef.current) progressRef.current.style.width = `${p * 100}%`
 
-      // Section change: React setState only at the 3 boundaries
+      // Section boundary — React setState only at the 3 transitions
       const idx = Math.min(SECTIONS.length - 1, Math.floor(p * SECTIONS.length))
       if (idx !== activeIdxRef.current) {
         activeIdxRef.current = idx
         setActiveIdx(idx)
       }
 
-      // Frame draw: instant array lookup
-      const frames = framesRef.current
-      const canvas = canvasRef.current
-      const ctx    = ctxRef.current
-      if (frames.length > 0 && canvas && ctx) {
-        const fi = Math.min(frames.length - 1, Math.round(p * (frames.length - 1)))
-        drawBitmapCover(ctx, frames[fi], canvas.width, canvas.height)
+      // Live mode: sync the live video time to scroll position
+      const live = liveRef.current
+      if (mode === 'live' && live && Number.isFinite(live.duration)) {
+        live.currentTime = p * live.duration
+      }
+
+      // Ready mode: instant frame lookup
+      if (mode === 'ready') {
+        const frames = framesRef.current
+        const canvas = canvasRef.current
+        const ctx    = ctxRef.current
+        if (frames.length > 0 && canvas && ctx) {
+          const fi = Math.min(frames.length - 1, Math.round(p * (frames.length - 1)))
+          drawBitmapCover(ctx, frames[fi], canvas.width, canvas.height)
+        }
       }
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [mode])
 
   return (
     <div ref={wrapperRef} style={{ height: '300vh' }}>
       <div className="sticky top-0 h-[100dvh] overflow-hidden">
 
-        {/* Hidden video — only used during extraction */}
+        {/* Extraction video — hidden, used only for frame seeking */}
         <video
           ref={videoRef}
           src="/exploding_view.mp4"
@@ -224,34 +223,26 @@ export default function ScrollVideo() {
           className="sr-only"
         />
 
-        {/* Canvas */}
+        {/* Live preview video — visible via canvas mirror while extracting */}
+        <video
+          ref={liveRef}
+          src="/exploding_view.mp4"
+          muted
+          playsInline
+          loop
+          preload="auto"
+          className="sr-only"
+        />
+
+        {/* Canvas — shows live mirror in 'live' mode, bitmap frames in 'ready' mode */}
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full"
           style={{ willChange: 'transform' }}
         />
 
-        {/* ── Loading screen ── */}
-        {!ready && (
-          <div className="absolute inset-0 z-30 bg-ink flex flex-col items-center justify-center gap-5">
-            <div className="w-40 h-px bg-[#ffffff10]">
-              <div
-                className="h-full bg-signal transition-all duration-150"
-                style={{ width: `${loadPct}%` }}
-              />
-            </div>
-            <span className="text-[11px] font-body tracking-widest uppercase text-muted">
-              Loading frames {loadPct}%
-            </span>
-          </div>
-        )}
-
         {/* ── Gradient overlays ── */}
-
-        {/* Dark scrim */}
         <div className="absolute inset-0 pointer-events-none bg-[#09090E]/40" />
-
-        {/* Top & bottom — thick solid wipe, no seams */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -259,8 +250,6 @@ export default function ScrollVideo() {
               'linear-gradient(to bottom, #09090E 0%, #09090E 6%, rgba(9,9,14,0.88) 20%, transparent 34%, transparent 66%, rgba(9,9,14,0.88) 80%, #09090E 94%, #09090E 100%)',
           }}
         />
-
-        {/* Left & right */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -281,7 +270,6 @@ export default function ScrollVideo() {
               transition={{ duration: 0.55, ease: [0.23, 1, 0.32, 1] }}
               className="max-w-lg"
             >
-              {/* Frosted glass card */}
               <div className="rounded-2xl px-8 py-8 backdrop-blur-xl bg-[#09090E]/65 border border-[#ffffff0d] shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
                 <span className="inline-flex items-center gap-2 text-[11px] font-body font-medium tracking-widest uppercase text-signal border border-signal/30 bg-signal/10 px-4 py-1.5 rounded-full mb-7 block w-fit">
                   <span className="w-1.5 h-1.5 rounded-full bg-signal" />
@@ -316,7 +304,7 @@ export default function ScrollVideo() {
             ))}
           </div>
 
-          {/* Progress bar — direct DOM ref */}
+          {/* Progress bar */}
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-px bg-[#ffffff10]">
             <div ref={progressRef} className="h-full bg-signal" style={{ width: '0%' }} />
           </div>
