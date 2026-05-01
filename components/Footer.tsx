@@ -16,7 +16,7 @@ export default function Footer() {
               Krishanora<span className="text-signal">.</span>IT
             </span>
             <p className="text-muted font-body text-[13px] leading-relaxed max-w-[240px]">
-              Web & Android development studio based in Hyderabad, India.
+              Web & mobile development studio crafting products that perform.
               Building products that perform.
             </p>
             <span className="inline-flex items-center gap-2 text-[12px] font-body text-muted">

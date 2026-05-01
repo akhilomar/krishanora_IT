@@ -55,12 +55,12 @@ export default function Contact() {
                 <span className="text-[11px] font-body font-medium tracking-widest uppercase text-signal mb-5 block">
                   Get in touch
                 </span>
-                <h2 className="font-display font-extrabold text-[42px] md:text-[58px] tracking-tighter text-chalk leading-[0.95]">
+                <h2 className="font-display font-extrabold text-[32px] sm:text-[40px] md:text-[52px] lg:text-[58px] tracking-tighter text-chalk leading-[0.95]">
                   Let's build
                   <br />
-                  something
+                  something worth
                   <br />
-                  worth using.
+                  using.
                 </h2>
               </div>
 

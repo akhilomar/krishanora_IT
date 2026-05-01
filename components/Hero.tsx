@@ -27,7 +27,7 @@ export default function Hero() {
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover z-0"
         src="/IT_service.mp4"
       />
 
@@ -65,7 +65,7 @@ export default function Hero() {
         <motion.div variants={ITEM}>
           <span className="inline-flex items-center gap-2 text-[11px] font-body font-medium tracking-widest uppercase text-signal border border-signal/25 bg-signal/10 backdrop-blur-sm px-4 py-1.5 rounded-full">
             <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
-            Available for new projects · Hyderabad, India
+            Available for new projects
           </span>
         </motion.div>
 
