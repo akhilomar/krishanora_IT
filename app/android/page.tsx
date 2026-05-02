@@ -7,6 +7,10 @@ import Link from 'next/link'
 const WA_LINK = 'https://wa.me/917007964451?text=Hi%2C%20I%27m%20interested%20in%20Android%20App%20Development%20services'
 const CALL_LINK = 'tel:+917007964451'
 
+/* ─── link helpers — bypass browser "leave site?" / protocol dialogs ─ */
+const goWA  = (e: React.MouseEvent) => { e.preventDefault(); window.open(WA_LINK, '_blank', 'noopener,noreferrer') }
+const goCall = (e: React.MouseEvent) => { e.preventDefault(); window.open(CALL_LINK) }
+
 /* shared SVGs */
 const WaIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -47,6 +51,7 @@ function SectionCTA({ label = 'Ready to build your app?' }: { label?: string }) 
         </a>
         <a
           href={CALL_LINK}
+          onClick={goCall}
           className="inline-flex items-center gap-1.5 px-5 py-2.5 border border-border bg-surface rounded-xl text-chalk font-body font-semibold text-[13px] hover:border-signal/40 hover:-translate-y-0.5 transition-all duration-200"
         >
           <PhoneIcon size={13} color="#5B6EF5" />
@@ -100,6 +105,7 @@ function AndroidNav() {
         <div className="hidden md:flex items-center gap-2.5">
           <a
             href={CALL_LINK}
+            onClick={goCall}
             className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-body font-semibold transition-all duration-300 ${
               scrolled
                 ? 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-[0_4px_16px_rgba(16,185,129,0.4)]'
@@ -140,7 +146,7 @@ function AndroidNav() {
           <div className="grid grid-cols-2 gap-2 pt-2">
             <a
               href={CALL_LINK}
-              onClick={() => setMobileOpen(false)}
+              onClick={(e) => { setMobileOpen(false); goCall(e) }}
               className="flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500 text-white text-sm font-body font-semibold"
             >
               <PhoneIcon size={14} color="white" />
@@ -154,7 +160,7 @@ function AndroidNav() {
               Get Free Quote
             </a>
           </div>
-          <a href={WA_LINK} target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}
+          <a href={WA_LINK} onClick={(e) => { setMobileOpen(false); goWA(e) }}
             className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 text-[#25D366] text-sm font-body font-medium">
             <WaIcon size={14} />
             Chat on WhatsApp
@@ -251,6 +257,7 @@ function Hero() {
         <motion.div variants={ITEM} className="flex items-center justify-center gap-3 mb-8">
           <a
             href={CALL_LINK}
+            onClick={goCall}
             className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-border text-muted font-body font-medium text-[13px] hover:border-signal/40 hover:text-chalk transition-all duration-200"
           >
             <PhoneIcon size={13} color="currentColor" />
@@ -259,8 +266,7 @@ function Hero() {
           <span className="w-px h-4 bg-border" />
           <a
             href={WA_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={goWA}
             className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-border text-muted font-body font-medium text-[13px] hover:border-[#25D366]/40 hover:text-[#25D366] transition-all duration-200"
           >
             <WaIcon size={13} />
@@ -306,6 +312,7 @@ function OfferStrip() {
         {/* Quick action */}
         <a
           href={CALL_LINK}
+          onClick={goCall}
           className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 text-white rounded-xl font-body font-semibold text-[13px] hover:bg-emerald-400 transition-all duration-200 shadow-[0_4px_16px_rgba(16,185,129,0.35)]"
         >
           <PhoneIcon size={13} color="white" />
@@ -388,12 +395,12 @@ function QuickForm() {
 
               {/* Alternate contacts */}
               <div className="flex items-center gap-3 pt-2 flex-wrap">
-                <a href={CALL_LINK} className="inline-flex items-center gap-2 text-[13px] font-body font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
+                <a href={CALL_LINK} onClick={goCall} className="inline-flex items-center gap-2 text-[13px] font-body font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
                   <PhoneIcon size={13} color="#34d399" />
                   +91 70079 64451
                 </a>
                 <span className="text-border">|</span>
-                <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-[13px] font-body font-medium text-[#25D366] hover:text-[#1fb857] transition-colors">
+                <a href={WA_LINK} onClick={goWA} className="inline-flex items-center gap-2 text-[13px] font-body font-medium text-[#25D366] hover:text-[#1fb857] transition-colors">
                   <WaIcon size={13} />
                   WhatsApp us
                 </a>
@@ -577,7 +584,7 @@ function WhyUs() {
               <a href="#contact" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-signal text-white rounded-xl font-body font-semibold text-[14px] hover:bg-[#6b7df7] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(91,110,245,0.4)] transition-all duration-200">
                 Get Free Quote
               </a>
-              <a href={CALL_LINK} className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-border bg-surface rounded-xl text-chalk font-body font-semibold text-[14px] hover:border-signal/40 hover:-translate-y-0.5 transition-all duration-200">
+              <a href={CALL_LINK} onClick={goCall} className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-border bg-surface rounded-xl text-chalk font-body font-semibold text-[14px] hover:border-signal/40 hover:-translate-y-0.5 transition-all duration-200">
                 <PhoneIcon size={14} color="#5B6EF5" />
                 Call Now
               </a>
@@ -950,8 +957,8 @@ function LeadForm() {
 
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1fr_500px] gap-0">
 
-            {/* Left */}
-            <div className="p-8 md:p-14 flex flex-col justify-center gap-7 lg:border-r border-border">
+            {/* Left — pushed below form on mobile so scrolling to #contact hits the form first */}
+            <div className="order-2 lg:order-1 p-8 md:p-14 flex flex-col justify-center gap-7 lg:border-r border-border">
               <div>
                 <span className="text-[11px] font-body font-medium tracking-widest uppercase text-signal mb-4 block">Free consultation</span>
                 <h2 className="font-display font-extrabold text-[30px] sm:text-[40px] md:text-[50px] tracking-tighter text-chalk leading-[0.95]">
@@ -967,17 +974,18 @@ function LeadForm() {
 
               {/* Contact options */}
               <div className="flex flex-col gap-3">
-                {[
-                  { icon: <WaIcon size={15} />, label: 'WhatsApp: +91 70079 64451', href: WA_LINK, color: 'text-[#25D366]' },
-                  { icon: <PhoneIcon size={15} color="#34d399" />, label: 'Call: +91 70079 64451', href: CALL_LINK, color: 'text-emerald-400' },
-                  { icon: '✉', label: 'query@krishanora.com', href: 'mailto:query@krishanora.com', color: 'text-muted' },
-                ].map(({ icon, label, href, color }) => (
-                  <a key={label} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
-                    className={`flex items-center gap-3 text-[14px] font-body ${color} hover:opacity-80 transition-opacity`}>
-                    <span className="shrink-0">{icon}</span>
-                    {label}
-                  </a>
-                ))}
+                <a href={WA_LINK} onClick={goWA} className="flex items-center gap-3 text-[14px] font-body text-[#25D366] hover:opacity-80 transition-opacity">
+                  <WaIcon size={15} />
+                  WhatsApp: +91 70079 64451
+                </a>
+                <a href={CALL_LINK} onClick={goCall} className="flex items-center gap-3 text-[14px] font-body text-emerald-400 hover:opacity-80 transition-opacity">
+                  <PhoneIcon size={15} color="#34d399" />
+                  Call: +91 70079 64451
+                </a>
+                <a href="mailto:query@krishanora.com" className="flex items-center gap-3 text-[14px] font-body text-muted hover:opacity-80 transition-opacity">
+                  <span>✉</span>
+                  query@krishanora.com
+                </a>
               </div>
 
               {/* Trust bullets */}
@@ -991,8 +999,8 @@ function LeadForm() {
               </div>
             </div>
 
-            {/* Right — form */}
-            <div className="p-8 md:p-14 bg-[#0b0b12]">
+            {/* Right — form, order-first on mobile */}
+            <div className="order-1 lg:order-2 p-8 md:p-14 bg-[#0b0b12]">
               {sent ? (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                   className="h-full flex flex-col items-center justify-center gap-5 text-center py-16">
@@ -1070,12 +1078,12 @@ function FinalCTA() {
                 <path d="M2.5 11.5L11.5 2.5M11.5 2.5H5.5M11.5 2.5V8.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </a>
-            <a href={CALL_LINK}
+            <a href={CALL_LINK} onClick={goCall}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 font-body font-bold text-[15px] hover:bg-emerald-500/20 hover:-translate-y-0.5 transition-all duration-200">
               <PhoneIcon size={16} color="#34d399" />
               Call Now
             </a>
-            <a href={WA_LINK} target="_blank" rel="noopener noreferrer"
+            <a href={WA_LINK} onClick={goWA}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-[#25D366]/35 bg-[#25D366]/10 text-[#25D366] font-body font-bold text-[15px] hover:bg-[#25D366]/20 hover:-translate-y-0.5 transition-all duration-200">
               <WaIcon size={16} />
               WhatsApp
@@ -1166,8 +1174,7 @@ function FloatingWA() {
     <div className="hidden md:flex fixed bottom-6 right-5 z-40 flex-col items-end gap-3">
       <a
         href={WA_LINK}
-        target="_blank"
-        rel="noopener noreferrer"
+        onClick={goWA}
         className="group flex items-center gap-3 bg-[#25D366] text-white rounded-full shadow-[0_4px_24px_rgba(37,211,102,0.5)] hover:shadow-[0_4px_36px_rgba(37,211,102,0.65)] hover:scale-105 transition-all duration-200 pl-4 pr-5 py-3"
         aria-label="Chat on WhatsApp"
       >
@@ -1192,8 +1199,7 @@ function MobileStickyBar() {
       {/* WhatsApp — primary, largest tap target */}
       <a
         href={WA_LINK}
-        target="_blank"
-        rel="noopener noreferrer"
+        onClick={goWA}
         className="flex-[1.15] flex items-center justify-center gap-2 py-3.5 bg-[#25D366] text-white rounded-xl font-body font-bold text-[14px] active:opacity-90 transition-opacity shadow-[0_4px_16px_rgba(37,211,102,0.35)]"
       >
         <WaIcon size={17} />
@@ -1202,6 +1208,7 @@ function MobileStickyBar() {
       {/* Call Now */}
       <a
         href={CALL_LINK}
+        onClick={goCall}
         className="flex-1 flex items-center justify-center gap-1.5 py-3.5 bg-[#1C1C28] border border-[#252534] text-chalk rounded-xl font-body font-semibold text-[13px] active:opacity-80 transition-opacity"
       >
         <PhoneIcon size={14} color="#34d399" />
