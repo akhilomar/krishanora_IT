@@ -19,7 +19,7 @@ const stats = [
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
+    <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden">
 
       {/* ── Video background ──
            Wrapper with overflow:hidden + centred transform covers all browsers.
@@ -33,9 +33,9 @@ export default function Hero() {
           playsInline
           style={{
             position: 'absolute',
-            top: '50%',
+            top: '40%',
             left: '50%',
-            transform: 'translate(-50%, -50%)',
+            transform: 'translate(-50%, -40%)',
             minWidth: '100%',
             minHeight: '100%',
             width: 'auto',

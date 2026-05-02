@@ -172,39 +172,44 @@ export default function ScrollVideo() {
       const wrapper = wrapperRef.current
       if (!wrapper) return
 
-      const rect    = wrapper.getBoundingClientRect()
-      const viewH   = window.innerHeight
-      const wrapH   = wrapper.offsetHeight
+      const rect  = wrapper.getBoundingClientRect()
+      const viewH = window.innerHeight
+      const wrapH = wrapper.offsetHeight
 
-      // Spread animation over the full visible window — not just the sticky
-      // period. Animation starts the moment the section enters the viewport
-      // (rect.top = viewH) and ends when sticky releases (rect.top = -(wrapH-viewH)).
-      // Total range = wrapH, so there is zero dead scroll.
-      const p = Math.min(1, Math.max(0, (viewH - rect.top) / wrapH))
+      // ── pVideo: full visible range ───────────────────────────────────────
+      // Starts the moment the section enters the viewport from below.
+      // Drives the video/canvas so animation begins immediately — no dead wait.
+      const pVideo = Math.min(1, Math.max(0, (viewH - rect.top) / wrapH))
 
-      // Progress bar — direct DOM, no React re-render
-      if (progressRef.current) progressRef.current.style.width = `${p * 100}%`
+      // ── pSection: sticky period only ────────────────────────────────────
+      // Only starts counting once the panel has fully stuck at the top.
+      // This prevents section 0 from transitioning during the approach scroll.
+      const stickyRange = wrapH - viewH           // 150vh at 250vh height
+      const pSection = Math.min(1, Math.max(0, -rect.top / stickyRange))
 
-      // Section boundary — React setState only at the 3 transitions
-      const idx = Math.min(SECTIONS.length - 1, Math.floor(p * SECTIONS.length))
+      // Progress bar tracks pSection (shows sticky-period progress)
+      if (progressRef.current) progressRef.current.style.width = `${pSection * 100}%`
+
+      // Section text only changes during sticky — never during approach
+      const idx = Math.min(SECTIONS.length - 1, Math.floor(pSection * SECTIONS.length))
       if (idx !== activeIdxRef.current) {
         activeIdxRef.current = idx
         setActiveIdx(idx)
       }
 
-      // Live mode: sync the live video time to scroll position
+      // Live video: use pVideo so it plays from the first moment section is visible
       const live = liveRef.current
       if (mode === 'live' && live && Number.isFinite(live.duration)) {
-        live.currentTime = p * live.duration
+        live.currentTime = pVideo * live.duration
       }
 
-      // Ready mode: instant frame lookup
+      // Frames: also use pVideo for consistent visual with live mode
       if (mode === 'ready') {
         const frames = framesRef.current
         const canvas = canvasRef.current
         const ctx    = ctxRef.current
         if (frames.length > 0 && canvas && ctx) {
-          const fi = Math.min(frames.length - 1, Math.round(p * (frames.length - 1)))
+          const fi = Math.min(frames.length - 1, Math.round(pVideo * (frames.length - 1)))
           drawBitmapCover(ctx, frames[fi], canvas.width, canvas.height)
         }
       }
@@ -216,7 +221,7 @@ export default function ScrollVideo() {
   }, [mode])
 
   return (
-    <div ref={wrapperRef} style={{ height: '230vh' }}>
+    <div ref={wrapperRef} style={{ height: '250vh' }}>
       <div className="sticky top-0 h-[100dvh] overflow-hidden">
 
         {/* Extraction video — hidden, used only for frame seeking */}
