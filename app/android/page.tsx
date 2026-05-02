@@ -942,7 +942,7 @@ function LeadForm() {
   const inp = "w-full bg-[#1C1C28] border border-[#252534] rounded-xl px-4 py-3.5 text-[14px] font-body text-chalk placeholder:text-muted focus:outline-none focus:border-signal/60 transition-colors duration-200"
 
   return (
-    <section id="contact" className="px-5 md:px-10 py-20 bg-surface">
+    <section id="contact" className="px-5 md:px-10 py-20 bg-surface scroll-mt-20">
       <div className="max-w-7xl mx-auto">
         <div className="relative bg-ink border border-border rounded-[32px] overflow-hidden">
           <div className="absolute -top-24 -right-24 w-80 h-80 bg-signal/8 rounded-full blur-[80px] pointer-events-none" />
