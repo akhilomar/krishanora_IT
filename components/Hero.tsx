@@ -1,13 +1,13 @@
 'use client'
 import { motion } from 'framer-motion'
 
-const ITEM = {
-  hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
-  show:  { opacity: 1, y: 0,  filter: 'blur(0px)', transition: { duration: 0.9, ease: [0.23, 1, 0.32, 1] } },
-}
 const CONTAINER = {
   hidden: {},
   show: { transition: { staggerChildren: 0.09, delayChildren: 0.2 } },
+}
+const ITEM = {
+  hidden: { opacity: 0, y: 32, filter: 'blur(6px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.9, ease: [0.23, 1, 0.32, 1] } },
 }
 
 const stats = [
@@ -17,219 +17,145 @@ const stats = [
   { value: '12',   label: 'Countries served' },
 ]
 
-function PlatformIcons() {
-  return (
-    <div className="flex items-center gap-1.5 mt-1.5">
-      <span title="Web" className="w-5 h-5 rounded-md bg-signal/20 border border-signal/30 flex items-center justify-center">
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-          <rect x="0.5" y="1.5" width="10" height="8" rx="1" stroke="#5B6EF5" strokeWidth="1"/>
-          <path d="M3 4L1 5.5L3 7" stroke="#5B6EF5" strokeWidth="0.8" strokeLinecap="round"/>
-          <path d="M8 4L10 5.5L8 7" stroke="#5B6EF5" strokeWidth="0.8" strokeLinecap="round"/>
-        </svg>
-      </span>
-      <span title="React Native" className="w-5 h-5 rounded-md bg-violet-500/20 border border-violet-400/30 flex items-center justify-center">
-        <svg width="9" height="11" viewBox="0 0 9 11" fill="none">
-          <rect x="1.5" y="0.5" width="6" height="10" rx="1" stroke="#a78bfa" strokeWidth="1"/>
-          <circle cx="4.5" cy="8.5" r="0.6" fill="#a78bfa"/>
-        </svg>
-      </span>
-      <span title="Android" className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center">
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-          <path d="M2 7.5V4.5C2 3.12 3.12 2 4.5 2H6.5C7.88 2 9 3.12 9 4.5V7.5" stroke="#34d399" strokeWidth="1" strokeLinecap="round"/>
-          <rect x="1" y="4.5" width="1.2" height="2.5" rx="0.6" fill="#34d399"/>
-          <rect x="8.8" y="4.5" width="1.2" height="2.5" rx="0.6" fill="#34d399"/>
-          <path d="M3.5 1.5L3 0.5M7.5 1.5L8 0.5" stroke="#34d399" strokeWidth="0.8" strokeLinecap="round"/>
-        </svg>
-      </span>
-    </div>
-  )
-}
-
 export default function Hero() {
   return (
-    <motion.section
-      variants={CONTAINER}
-      initial="hidden"
-      animate="show"
-      className="relative bg-[#09090E]"
-    >
+    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
 
-      {/* ═══════════════════════════════════════════════════
-          DESKTOP layout — full-screen video, centred content
-          ═══════════════════════════════════════════════════ */}
-      <div className="hidden md:block relative h-[100dvh] overflow-hidden">
+      {/* Video — stretches to cover on all screen sizes */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        src="/IT_service.mp4"
+      />
 
-        {/* Video */}
-        <div className="absolute inset-0 overflow-hidden z-0">
-          <video autoPlay muted loop playsInline
-            style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', minWidth:'100%', minHeight:'100%', width:'auto', height:'auto' }}
-            src="/IT_service.mp4"
-          />
-        </div>
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 z-10 pointer-events-none" style={{
+      {/* Gradient overlays */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{
           background: [
             'linear-gradient(to bottom, rgba(9,9,14,0.45), rgba(9,9,14,0.45))',
             'radial-gradient(ellipse 90% 90% at 50% 50%, transparent 25%, rgba(9,9,14,0.82) 80%)',
             'linear-gradient(to bottom, #09090E 0%, transparent 22%, transparent 68%, #09090E 100%)',
             'linear-gradient(to right, #09090E 0%, transparent 18%, transparent 82%, #09090E 100%)',
           ].join(', '),
-        }} />
+        }}
+      />
 
-        {/* Centred content */}
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center gap-7 px-10 max-w-4xl mx-auto left-0 right-0">
-          <motion.div variants={ITEM}>
-            <span className="inline-flex items-center gap-2 text-[11px] font-body font-medium tracking-widest uppercase text-signal border border-signal/25 bg-signal/10 backdrop-blur-sm px-4 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
-              Available for new projects
-            </span>
-          </motion.div>
-
-          <motion.h1 variants={ITEM}
-            className="font-display font-extrabold text-[80px] xl:text-[96px] leading-[0.92] tracking-tighter text-chalk"
-          >
-            We build<br />
-            <em className="not-italic text-signal">digital</em><br />
-            products<br />
-            that scale.
-          </motion.h1>
-
-          <motion.p variants={ITEM} className="text-[#c8c5bf] font-body font-light text-xl leading-relaxed max-w-[520px]">
-            From pixel-perfect web applications to native Android apps —
-            we engineer products that move fast and look exceptional.
-          </motion.p>
-
-          <motion.div variants={ITEM} className="flex items-center gap-3">
-            <a href="#contact"
-              className="group inline-flex items-center gap-2 px-7 py-3.5 bg-signal text-white rounded-xl font-body font-medium text-sm
-                         hover:bg-[#6b7df7] hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(91,110,245,0.45)] transition-all duration-200"
-            >
-              Start a project
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="group-hover:translate-x-0.5 transition-transform">
-                <path d="M2.5 10.5L10.5 2.5M10.5 2.5H4.5M10.5 2.5V8.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </a>
-            <a href="#work"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#09090E]/60 backdrop-blur-sm border border-[#ffffff18] text-chalk rounded-xl font-body font-medium text-sm
-                         hover:border-signal/40 hover:-translate-y-0.5 transition-all duration-200"
-            >
-              View our work
-            </a>
-          </motion.div>
-
-          <motion.div variants={ITEM}
-            className="grid grid-cols-4 gap-x-12 pt-6 mt-2 border-t border-[#ffffff10] w-full max-w-xl"
-          >
-            {stats.map(({ value, label }) => (
-              <div key={label} className="flex flex-col items-center gap-1">
-                <span className="font-display font-bold text-[26px] text-chalk leading-none">{value}</span>
-                <span className="text-muted text-[11px] font-body">{label}</span>
-                {label === 'Products shipped' && <PlatformIcons />}
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Scroll cue */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 0.6 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
-        >
-          <span className="text-[10px] text-muted font-body tracking-[0.2em] uppercase">Scroll</span>
-          <motion.div animate={{ y: [0, 7, 0] }} transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-px h-7 bg-gradient-to-b from-muted/50 to-transparent"
-          />
+      {/* Content */}
+      <motion.div
+        variants={CONTAINER}
+        initial="hidden"
+        animate="show"
+        className="relative z-20 flex flex-col items-center text-center gap-7 px-5 md:px-10 py-24 max-w-4xl mx-auto w-full"
+      >
+        {/* Badge */}
+        <motion.div variants={ITEM}>
+          <span className="inline-flex items-center gap-2 text-[11px] font-body font-medium tracking-widest uppercase text-signal border border-signal/25 bg-signal/10 backdrop-blur-sm px-4 py-1.5 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
+            Available for new projects
+          </span>
         </motion.div>
-      </div>
 
-      {/* ═══════════════════════════════════════════════════
-          MOBILE layout — video fills screen, headline at
-          bottom of video, everything else below on dark bg
-          ═══════════════════════════════════════════════════ */}
-      <div className="md:hidden">
+        {/* Headline */}
+        <motion.h1
+          variants={ITEM}
+          className="font-display font-extrabold text-[52px] sm:text-[68px] md:text-[80px] xl:text-[96px] leading-[0.92] tracking-tighter text-chalk"
+        >
+          We build
+          <br />
+          <em className="not-italic text-signal">digital</em>
+          <br />
+          products
+          <br />
+          that scale.
+        </motion.h1>
 
-        {/* Video panel: full viewport height */}
-        <div className="relative h-[100svh] overflow-hidden">
+        {/* Subtext */}
+        <motion.p
+          variants={ITEM}
+          className="text-[#c8c5bf] font-body font-light text-lg md:text-xl leading-relaxed max-w-[520px]"
+        >
+          From pixel-perfect web applications to native Android apps —
+          we engineer products that move fast and look exceptional.
+        </motion.p>
 
-          {/* Video — fills full panel */}
-          <video autoPlay muted loop playsInline
-            style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', minWidth:'100%', minHeight:'100%', width:'auto', height:'auto' }}
-            src="/IT_service.mp4"
-          />
-
-          {/* Gradient — dark top strip + heavy bottom fade so headline is readable */}
-          <div className="absolute inset-0 pointer-events-none" style={{
-            background: [
-              'linear-gradient(to bottom, rgba(9,9,14,0.75) 0%, rgba(9,9,14,0.2) 30%, transparent 55%, rgba(9,9,14,0.7) 75%, #09090E 100%)',
-              'linear-gradient(to right, rgba(9,9,14,0.4) 0%, transparent 30%, transparent 70%, rgba(9,9,14,0.4) 100%)',
-            ].join(', '),
-          }} />
-
-          {/* Badge — top left */}
-          <motion.div variants={ITEM}
-            className="absolute top-12 left-0 right-0 flex justify-center z-10 px-5"
+        {/* CTAs */}
+        <motion.div variants={ITEM} className="flex flex-wrap items-center justify-center gap-3 pt-1">
+          <a
+            href="#contact"
+            className="group inline-flex items-center gap-2 px-7 py-3.5 bg-signal text-white rounded-xl font-body font-medium text-sm
+                       hover:bg-[#6b7df7] hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(91,110,245,0.45)] transition-all duration-200"
           >
-            <span className="inline-flex items-center gap-2 text-[11px] font-body font-medium tracking-widest uppercase text-signal border border-signal/25 bg-signal/10 backdrop-blur-sm px-4 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
-              Available for new projects
-            </span>
-          </motion.div>
-
-          {/* Headline — anchored to bottom of video panel */}
-          <motion.div variants={ITEM}
-            className="absolute bottom-10 left-0 right-0 z-10 px-6"
+            Start a project
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="group-hover:translate-x-0.5 transition-transform">
+              <path d="M2.5 10.5L10.5 2.5M10.5 2.5H4.5M10.5 2.5V8.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </a>
+          <a
+            href="#work"
+            className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#09090E]/60 backdrop-blur-sm border border-[#ffffff18] text-chalk rounded-xl font-body font-medium text-sm
+                       hover:border-signal/40 hover:-translate-y-0.5 transition-all duration-200"
           >
-            <h1 className="font-display font-extrabold text-[52px] leading-[0.9] tracking-tighter text-chalk">
-              We build<br />
-              <em className="not-italic text-signal">digital</em><br />
-              products<br />
-              that scale.
-            </h1>
-          </motion.div>
-        </div>
+            View our work
+          </a>
+        </motion.div>
 
-        {/* Below-video content */}
-        <div className="px-6 pt-8 pb-12 flex flex-col gap-7">
+        {/* Stats */}
+        <motion.div
+          variants={ITEM}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-x-12 gap-y-5 pt-6 mt-2 border-t border-[#ffffff10] w-full max-w-xl"
+        >
+          {stats.map(({ value, label }) => (
+            <div key={label} className="flex flex-col items-center gap-1">
+              <span className="font-display font-bold text-[26px] text-chalk leading-none">{value}</span>
+              <span className="text-muted text-[11px] font-body">{label}</span>
+              {label === 'Products shipped' && (
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <span title="Web" className="w-5 h-5 rounded-md bg-signal/20 border border-signal/30 flex items-center justify-center">
+                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                      <rect x="0.5" y="1.5" width="10" height="8" rx="1" stroke="#5B6EF5" strokeWidth="1"/>
+                      <path d="M3 4L1 5.5L3 7" stroke="#5B6EF5" strokeWidth="0.8" strokeLinecap="round"/>
+                      <path d="M8 4L10 5.5L8 7" stroke="#5B6EF5" strokeWidth="0.8" strokeLinecap="round"/>
+                    </svg>
+                  </span>
+                  <span title="React Native" className="w-5 h-5 rounded-md bg-violet-500/20 border border-violet-400/30 flex items-center justify-center">
+                    <svg width="9" height="11" viewBox="0 0 9 11" fill="none">
+                      <rect x="1.5" y="0.5" width="6" height="10" rx="1" stroke="#a78bfa" strokeWidth="1"/>
+                      <circle cx="4.5" cy="8.5" r="0.6" fill="#a78bfa"/>
+                    </svg>
+                  </span>
+                  <span title="Android" className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center">
+                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+                      <path d="M2 7.5V4.5C2 3.12 3.12 2 4.5 2H6.5C7.88 2 9 3.12 9 4.5V7.5" stroke="#34d399" strokeWidth="1" strokeLinecap="round"/>
+                      <rect x="1" y="4.5" width="1.2" height="2.5" rx="0.6" fill="#34d399"/>
+                      <rect x="8.8" y="4.5" width="1.2" height="2.5" rx="0.6" fill="#34d399"/>
+                      <path d="M3.5 1.5L3 0.5M7.5 1.5L8 0.5" stroke="#34d399" strokeWidth="0.8" strokeLinecap="round"/>
+                    </svg>
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </motion.div>
+      </motion.div>
 
-          <motion.p variants={ITEM}
-            className="text-[#c8c5bf] font-body font-light text-[16px] leading-relaxed"
-          >
-            From pixel-perfect web applications to native Android apps —
-            we engineer products that move fast and look exceptional.
-          </motion.p>
-
-          <motion.div variants={ITEM} className="flex flex-col gap-3">
-            <a href="#contact"
-              className="group w-full inline-flex items-center justify-center gap-2 px-7 py-4 bg-signal text-white rounded-xl font-body font-medium text-sm
-                         hover:bg-[#6b7df7] transition-all duration-200"
-            >
-              Start a project
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" className="group-hover:translate-x-0.5 transition-transform">
-                <path d="M2.5 10.5L10.5 2.5M10.5 2.5H4.5M10.5 2.5V8.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </a>
-            <a href="#work"
-              className="w-full inline-flex items-center justify-center px-7 py-4 border border-[#ffffff18] text-chalk rounded-xl font-body font-medium text-sm
-                         hover:border-signal/40 transition-all duration-200"
-            >
-              View our work
-            </a>
-          </motion.div>
-
-          <motion.div variants={ITEM}
-            className="grid grid-cols-2 gap-x-6 gap-y-6 pt-6 border-t border-[#ffffff10]"
-          >
-            {stats.map(({ value, label }) => (
-              <div key={label} className="flex flex-col gap-0.5">
-                <span className="font-display font-bold text-[28px] text-chalk leading-none">{value}</span>
-                <span className="text-muted text-[12px] font-body">{label}</span>
-                {label === 'Products shipped' && <PlatformIcons />}
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </div>
-
-    </motion.section>
+      {/* Scroll cue */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 0.6 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
+      >
+        <span className="text-[10px] text-muted font-body tracking-[0.2em] uppercase">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 7, 0] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-px h-7 bg-gradient-to-b from-muted/50 to-transparent"
+        />
+      </motion.div>
+    </section>
   )
 }
