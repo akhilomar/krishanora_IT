@@ -19,7 +19,7 @@ const stats = [
 
 export default function Hero() {
   return (
-    <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden">
 
       {/* ── Video background ──
            Wrapper with overflow:hidden + centred transform covers all browsers.
@@ -33,9 +33,9 @@ export default function Hero() {
           playsInline
           style={{
             position: 'absolute',
-            top: '40%',
+            top: '50%',
             left: '50%',
-            transform: 'translate(-50%, -40%)',
+            transform: 'translate(-50%, -50%)',
             minWidth: '100%',
             minHeight: '100%',
             width: 'auto',
@@ -73,7 +73,7 @@ export default function Hero() {
         variants={CONTAINER}
         initial="hidden"
         animate="show"
-        className="relative z-20 flex flex-col items-center text-center gap-7 px-5 md:px-10 py-32 max-w-4xl mx-auto w-full"
+        className="relative z-20 flex flex-col items-center text-center gap-7 px-5 md:px-10 py-20 sm:py-32 max-w-4xl mx-auto w-full"
       >
         {/* Badge */}
         <motion.div variants={ITEM}>
