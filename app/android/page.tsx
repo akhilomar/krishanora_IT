@@ -166,47 +166,47 @@ function AndroidNav() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO — tightened for mobile, CTAs above fold, Call Now added
+   HERO — single dominant CTA, clear hierarchy, mobile-first
 ═══════════════════════════════════════════════════════════════ */
 function Hero() {
   const CONTAINER = {
     hidden: {},
-    show: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
+    show: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
   }
   const ITEM = {
-    hidden: { opacity: 0, y: 28, filter: 'blur(5px)' },
-    show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.23, 1, 0.32, 1] } },
+    hidden: { opacity: 0, y: 24, filter: 'blur(5px)' },
+    show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.75, ease: [0.23, 1, 0.32, 1] } },
   }
 
   return (
-    <section className="relative overflow-hidden bg-ink pt-24 pb-12 md:pt-32 md:pb-16">
+    <section className="relative overflow-hidden bg-ink pt-24 pb-14 md:pt-32 md:pb-20">
       {/* Ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-signal/10 rounded-full blur-[120px]" />
         <div className="absolute top-1/3 left-1/4 w-[250px] h-[250px] bg-violet-600/8 rounded-full blur-[90px]" />
         <div className="absolute top-1/3 right-1/4 w-[250px] h-[250px] bg-emerald-500/6 rounded-full blur-[90px]" />
       </div>
-      {/* Grid */}
+      {/* Subtle grid */}
       <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
 
       <motion.div
         variants={CONTAINER}
         initial="hidden"
         animate="show"
-        className="relative z-10 flex flex-col items-center text-center gap-5 px-5 md:px-10 max-w-4xl mx-auto w-full"
+        className="relative z-10 flex flex-col items-center text-center px-5 md:px-10 max-w-4xl mx-auto w-full"
       >
         {/* Badge */}
-        <motion.div variants={ITEM}>
+        <motion.div variants={ITEM} className="mb-6">
           <span className="inline-flex items-center gap-2 text-[11px] font-body font-medium tracking-widest uppercase text-signal border border-signal/25 bg-signal/10 px-4 py-1.5 rounded-full">
             <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
             Android App Development Company — India
           </span>
         </motion.div>
 
-        {/* H1 — sized to stay above fold on phones */}
+        {/* H1 */}
         <motion.h1
           variants={ITEM}
-          className="font-display font-extrabold text-[42px] sm:text-[58px] md:text-[74px] xl:text-[88px] leading-[0.93] tracking-tighter text-chalk"
+          className="font-display font-extrabold text-[42px] sm:text-[58px] md:text-[74px] xl:text-[88px] leading-[0.93] tracking-tighter text-chalk mb-5"
         >
           Build Your Android
           <br />
@@ -217,45 +217,59 @@ function Hero() {
         {/* Subheadline */}
         <motion.p
           variants={ITEM}
-          className="text-[#c8c5bf] font-body font-light text-[17px] md:text-xl leading-relaxed max-w-[520px]"
+          className="text-[#c8c5bf] font-body font-light text-[17px] md:text-xl leading-relaxed max-w-[500px] mb-4"
         >
           We help startups and businesses launch powerful, scalable Android apps quickly and affordably.
         </motion.p>
 
-        {/* ── PRIMARY CTAs — 3 actions, conversion hierarchy ── */}
-        <motion.div variants={ITEM} className="flex flex-col sm:flex-row items-center gap-3 pt-1 w-full sm:w-auto">
-          {/* 1: Form / quote — highest intent */}
+        {/* Urgency + trust lines — between subheadline and CTA */}
+        <motion.div variants={ITEM} className="flex flex-col items-center gap-1.5 mb-8">
+          <p className="text-[13px] font-body font-medium text-amber-300/90">
+            ⚡ Free consultation — Limited slots available this month
+          </p>
+          <p className="text-[13px] font-body text-muted">
+            Trusted by startups &amp; growing businesses
+          </p>
+        </motion.div>
+
+        {/* ── PRIMARY CTA — single dominant action ── */}
+        <motion.div variants={ITEM} className="flex flex-col items-center gap-2 w-full sm:w-auto mb-4">
           <a
             href="#contact"
-            className="w-full sm:w-auto group inline-flex items-center justify-center gap-2 px-7 py-4 bg-signal text-white rounded-xl font-body font-bold text-[15px] hover:bg-[#6b7df7] hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(91,110,245,0.5)] transition-all duration-200"
+            className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-signal text-white rounded-2xl font-body font-bold text-[16px] hover:bg-[#6b7df7] hover:-translate-y-0.5 hover:shadow-[0_10px_36px_rgba(91,110,245,0.55)] transition-all duration-200 shadow-[0_4px_20px_rgba(91,110,245,0.35)]"
           >
-            Get Free Quote
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="group-hover:translate-x-0.5 transition-transform">
+            Get Free App Quote
+            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" className="group-hover:translate-x-0.5 transition-transform">
               <path d="M2.5 11.5L11.5 2.5M11.5 2.5H5.5M11.5 2.5V8.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </a>
-          {/* 2: Call — mobile-first, immediate */}
+          {/* Microcopy */}
+          <p className="text-[12px] font-body text-muted">Takes less than 30 seconds</p>
+        </motion.div>
+
+        {/* ── SECONDARY CTAs — reduced visual weight ── */}
+        <motion.div variants={ITEM} className="flex items-center justify-center gap-3 mb-8">
           <a
             href={CALL_LINK}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-body font-bold text-[15px] hover:bg-emerald-500/25 hover:-translate-y-0.5 transition-all duration-200"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-border text-muted font-body font-medium text-[13px] hover:border-signal/40 hover:text-chalk transition-all duration-200"
           >
-            <PhoneIcon size={16} color="#34d399" />
+            <PhoneIcon size={13} color="currentColor" />
             Call Now
           </a>
-          {/* 3: WhatsApp */}
+          <span className="w-px h-4 bg-border" />
           <a
             href={WA_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl border border-[#25D366]/35 bg-[#25D366]/10 text-[#25D366] font-body font-bold text-[15px] hover:bg-[#25D366]/20 hover:-translate-y-0.5 transition-all duration-200"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-border text-muted font-body font-medium text-[13px] hover:border-[#25D366]/40 hover:text-[#25D366] transition-all duration-200"
           >
-            <WaIcon size={16} />
+            <WaIcon size={13} />
             WhatsApp
           </a>
         </motion.div>
 
         {/* Trust badges */}
-        <motion.div variants={ITEM} className="flex flex-wrap items-center justify-center gap-2 pt-2">
+        <motion.div variants={ITEM} className="flex flex-wrap items-center justify-center gap-2">
           {['50+ Apps Delivered', 'Rated 4.9★', 'Play Store Ready', 'Kotlin & Compose'].map((t) => (
             <span key={t} className="inline-flex items-center gap-1.5 text-[12px] font-body text-muted bg-surface border border-border px-3 py-1.5 rounded-lg">
               <span className="w-1 h-1 rounded-full bg-signal" />
@@ -1169,34 +1183,34 @@ function FloatingWA() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   MOBILE STICKY BAR — replaces floating button on mobile
-   Critical for paid traffic mobile conversions
+   MOBILE STICKY BAR — WhatsApp primary, then Call, then Quote
+   Order matches mobile user intent: chat > call > form
 ═══════════════════════════════════════════════════════════════ */
 function MobileStickyBar() {
   return (
-    <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-[#111118]/97 backdrop-blur-xl border-t border-[#252534] px-4 py-3 flex items-center gap-2.5 safe-bottom">
-      {/* Call — primary action on mobile */}
-      <a
-        href={CALL_LINK}
-        className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-emerald-500 text-white rounded-xl font-body font-bold text-[14px] hover:bg-emerald-400 transition-colors shadow-[0_4px_16px_rgba(16,185,129,0.4)]"
-      >
-        <PhoneIcon size={16} color="white" />
-        Call Now
-      </a>
-      {/* WhatsApp */}
+    <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-[#0f0f16]/98 backdrop-blur-xl border-t border-[#252534] px-3 py-3 flex items-stretch gap-2">
+      {/* WhatsApp — primary, largest tap target */}
       <a
         href={WA_LINK}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#25D366] text-white rounded-xl font-body font-bold text-[14px] hover:bg-[#1fb857] transition-colors shadow-[0_4px_16px_rgba(37,211,102,0.4)]"
+        className="flex-[1.15] flex items-center justify-center gap-2 py-3.5 bg-[#25D366] text-white rounded-xl font-body font-bold text-[14px] active:opacity-90 transition-opacity shadow-[0_4px_16px_rgba(37,211,102,0.35)]"
       >
-        <WaIcon size={16} />
+        <WaIcon size={17} />
         WhatsApp
       </a>
-      {/* Quote */}
+      {/* Call Now */}
+      <a
+        href={CALL_LINK}
+        className="flex-1 flex items-center justify-center gap-1.5 py-3.5 bg-[#1C1C28] border border-[#252534] text-chalk rounded-xl font-body font-semibold text-[13px] active:opacity-80 transition-opacity"
+      >
+        <PhoneIcon size={14} color="#34d399" />
+        Call
+      </a>
+      {/* Get Quote */}
       <a
         href="#contact"
-        className="flex-1 flex items-center justify-center gap-1.5 py-3.5 bg-signal text-white rounded-xl font-body font-bold text-[14px] hover:bg-[#6b7df7] transition-colors shadow-[0_4px_16px_rgba(91,110,245,0.4)]"
+        className="flex-1 flex items-center justify-center py-3.5 bg-signal text-white rounded-xl font-body font-bold text-[13px] active:opacity-90 transition-opacity shadow-[0_4px_16px_rgba(91,110,245,0.35)]"
       >
         Get Quote
       </a>
