@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
@@ -327,7 +328,7 @@ function OfferStrip() {
    QUICK FORM — compact above-the-fold lead capture
 ═══════════════════════════════════════════════════════════════ */
 function QuickForm() {
-  const [sent, setSent] = useState(false)
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -348,7 +349,7 @@ function QuickForm() {
         }),
       })
       if (!res.ok) throw new Error()
-      setSent(true)
+      router.push('/android/thank-you')
     } catch {
       setError('Something went wrong. WhatsApp us at +91 70079 64451')
     } finally {
@@ -409,48 +410,27 @@ function QuickForm() {
 
             {/* Right — form */}
             <div className="p-8 md:p-10 bg-[#0f0f16]">
-              {sent ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="h-full flex flex-col items-center justify-center gap-4 text-center py-8"
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <h3 className="font-display font-bold text-[18px] text-chalk mb-1">Get Free Consultation</h3>
+                <input required name="name" type="text" placeholder="Your name *" className={inp} />
+                <input required name="email" type="email" placeholder="Email address *" className={inp} />
+                <input required name="phone" type="tel" placeholder="Phone number *" className={inp} />
+                <textarea
+                  name="message"
+                  rows={3}
+                  placeholder="Brief app idea (optional)"
+                  className={`${inp} resize-none`}
+                />
+                {error && <p className="text-[12px] font-body text-red-400">{error}</p>}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 bg-signal text-white rounded-xl font-body font-bold text-[14px] hover:bg-[#6b7df7] hover:shadow-[0_6px_24px_rgba(91,110,245,0.4)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <div className="w-14 h-14 rounded-full bg-signal/15 flex items-center justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 13L9 17L19 7" stroke="#5B6EF5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <h3 className="font-display font-bold text-xl text-chalk">Message received!</h3>
-                  <p className="text-muted font-body text-[13px] max-w-[220px]">We'll reply in under 4 hours. Or WhatsApp us for instant response.</p>
-                  <a href={WA_LINK} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 text-[#25D366] text-[13px] font-body font-medium">
-                    <WaIcon size={13} />
-                    Chat now →
-                  </a>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                  <h3 className="font-display font-bold text-[18px] text-chalk mb-1">Get Free Consultation</h3>
-                  <input required name="name" type="text" placeholder="Your name *" className={inp} />
-                  <input required name="email" type="email" placeholder="Email address *" className={inp} />
-                  <input required name="phone" type="tel" placeholder="Phone number *" className={inp} />
-                  <textarea
-                    name="message"
-                    rows={3}
-                    placeholder="Brief app idea (optional)"
-                    className={`${inp} resize-none`}
-                  />
-                  {error && <p className="text-[12px] font-body text-red-400">{error}</p>}
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3.5 bg-signal text-white rounded-xl font-body font-bold text-[14px] hover:bg-[#6b7df7] hover:shadow-[0_6px_24px_rgba(91,110,245,0.4)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {loading ? 'Sending…' : 'Get Free Consultation →'}
-                  </button>
-                  <p className="text-center text-[11px] text-muted font-body">Free. No spam. We reply in 4 hours.</p>
-                </form>
-              )}
+                  {loading ? 'Sending…' : 'Get Free Consultation →'}
+                </button>
+                <p className="text-center text-[11px] text-muted font-body">Free. No spam. We reply in 4 hours.</p>
+              </form>
             </div>
           </div>
         </div>
@@ -917,7 +897,7 @@ function Testimonials() {
    LEAD FORM — main conversion section
 ═══════════════════════════════════════════════════════════════ */
 function LeadForm() {
-  const [sent, setSent] = useState(false)
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -938,7 +918,7 @@ function LeadForm() {
         }),
       })
       if (!res.ok) throw new Error()
-      setSent(true)
+      router.push('/android/thank-you')
     } catch {
       setError('Something went wrong — WhatsApp us at +91 70079 64451 for instant help.')
     } finally {
@@ -1001,46 +981,28 @@ function LeadForm() {
 
             {/* Right — form, order-first on mobile */}
             <div className="order-1 lg:order-2 p-8 md:p-14 bg-[#0b0b12]">
-              {sent ? (
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                  className="h-full flex flex-col items-center justify-center gap-5 text-center py-16">
-                  <div className="w-16 h-16 rounded-full bg-signal/15 flex items-center justify-center">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 13L9 17L19 7" stroke="#5B6EF5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <h3 className="font-display font-bold text-2xl text-chalk">We got your message!</h3>
-                  <p className="text-muted font-body text-sm max-w-[260px]">Expect a reply within 4 hours. Or WhatsApp us for an instant response.</p>
-                  <a href={WA_LINK} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 text-[#25D366] text-sm font-body font-semibold hover:bg-[#25D366]/25 transition-all">
-                    <WaIcon size={14} />
-                    Chat on WhatsApp →
-                  </a>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                  <div>
-                    <h3 className="font-display font-bold text-[22px] text-chalk mb-1">Get Free Consultation</h3>
-                    <p className="text-muted font-body text-[13px]">All fields marked * are required.</p>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input required name="name" type="text" placeholder="Your name *" className={inp} />
-                    <input required name="email" type="email" placeholder="Email address *" className={inp} />
-                  </div>
-                  <input required name="phone" type="tel" placeholder="Phone number *" className={inp} />
-                  <textarea required name="message" rows={4}
-                    placeholder="Describe your app idea — what it does, who it's for, and your budget or timeline."
-                    className={`${inp} resize-none`}
-                  />
-                  {error && <p className="text-[12px] font-body text-red-400">{error}</p>}
-                  <button type="submit" disabled={loading}
-                    className="w-full py-4 bg-signal text-white rounded-xl font-body font-bold text-[15px] hover:bg-[#6b7df7] hover:shadow-[0_8px_30px_rgba(91,110,245,0.35)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {loading ? 'Sending…' : 'Get Free Consultation →'}
-                  </button>
-                  <p className="text-center text-[11px] text-muted font-body">Free. No spam. We reply within 4 hours.</p>
-                </form>
-              )}
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <div>
+                  <h3 className="font-display font-bold text-[22px] text-chalk mb-1">Get Free Consultation</h3>
+                  <p className="text-muted font-body text-[13px]">All fields marked * are required.</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input required name="name" type="text" placeholder="Your name *" className={inp} />
+                  <input required name="email" type="email" placeholder="Email address *" className={inp} />
+                </div>
+                <input required name="phone" type="tel" placeholder="Phone number *" className={inp} />
+                <textarea required name="message" rows={4}
+                  placeholder="Describe your app idea — what it does, who it's for, and your budget or timeline."
+                  className={`${inp} resize-none`}
+                />
+                {error && <p className="text-[12px] font-body text-red-400">{error}</p>}
+                <button type="submit" disabled={loading}
+                  className="w-full py-4 bg-signal text-white rounded-xl font-body font-bold text-[15px] hover:bg-[#6b7df7] hover:shadow-[0_8px_30px_rgba(91,110,245,0.35)] hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Sending…' : 'Get Free Consultation →'}
+                </button>
+                <p className="text-center text-[11px] text-muted font-body">Free. No spam. We reply within 4 hours.</p>
+              </form>
             </div>
           </div>
         </div>
