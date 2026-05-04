@@ -9,24 +9,15 @@ const CALL_LINK = 'tel:+917007964451'
    Replace these two values with your own from:
    Google Ads → Goals → Conversions → [your conversion] → Tag setup
 ─────────────────────────────────────────────────────────────── */
-const GA_CONVERSION_ID    = 'AW-XXXXXXXXX'   // e.g. AW-123456789
+const GA_CONVERSION_ID    = 'AW-18133566041'
 const GA_CONVERSION_LABEL = 'XXXXXXXXXXXX'   // e.g. AbCdEfGhIjK
 
 export default function ThankYouPage() {
   return (
     <>
-      {/* ── Google Ads conversion tracking ── */}
-      <Script
-        id="gtag-base"
-        strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_CONVERSION_ID}`}
-      />
+      {/* ── Google Ads conversion event ── */}
       <Script id="gtag-conversion" strategy="afterInteractive">
         {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_CONVERSION_ID}');
           gtag('event', 'conversion', {
             'send_to': '${GA_CONVERSION_ID}/${GA_CONVERSION_LABEL}'
           });
