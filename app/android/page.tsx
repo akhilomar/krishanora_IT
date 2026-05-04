@@ -1117,9 +1117,8 @@ function AndroidFooter() {
             © 2025 Krishanora IT. All rights reserved. | Android App Development Company India
           </span>
           <div className="flex items-center gap-6">
-            {['Privacy', 'Terms'].map(item => (
-              <a key={item} href="#" className="text-[12px] font-body text-muted hover:text-chalk transition-colors">{item}</a>
-            ))}
+            <Link href="/privacy" className="text-[12px] font-body text-muted hover:text-chalk transition-colors">Privacy</Link>
+            <a href="#" className="text-[12px] font-body text-muted hover:text-chalk transition-colors">Terms</a>
           </div>
         </div>
       </div>
